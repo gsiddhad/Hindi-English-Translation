@@ -8,17 +8,18 @@ import codecs
 import string
 from mtranslate import translate
 
-class Idiomcorpus() :
+
+class Idiomcorpus():
     flag = False
     hindi, english = [], []
     input, output = '', ''
     hidiom, eidiom = '', ''
 
-    def idiom_init(self, sentence) :
+    def idiom_init(self, sentence):
         if self.flag is False:
             self.flag = True
-            with codecs.open("idioms.txt", encoding="utf-8", mode="r") as fin :
-                for line in fin :
+            with codecs.open("idioms.txt", encoding="utf-8", mode="r") as fin:
+                for line in fin:
                     a, b = line.split('-')
                     self.hindi.append(re.sub(' +', ' ', a.strip()))
                     self.english.append(re.sub(' +', ' ', b.strip()))
@@ -28,11 +29,11 @@ class Idiomcorpus() :
 
     def idiom_tokenize(self, sentence):
         tokens, word = [], []
-        for char in sentence :
+        for char in sentence:
             if char == ' ':
                 tokens.append(''.join(word))
                 word = []
-            else :
+            else:
                 word.append(char)
         tokens.append(''.join(word))
         return tokens
@@ -40,7 +41,7 @@ class Idiomcorpus() :
     def check_idiom(self):
         unicount, uniidiom = 0, ''
         inputtoken = list(set(self.idiom_tokenize(self.input)))
-        for idiom in self.hindi :
+        for idiom in self.hindi:
             idiom = re.sub(' +', ' ', idiom.strip())
             idiomtoken = list(set(self.idiom_tokenize(idiom)))
             counter = self.idiom_match(inputtoken, idiomtoken)
@@ -48,7 +49,7 @@ class Idiomcorpus() :
                 if counter > unicount and len(idiomtoken) <= len(inputtoken):
                     unicount = counter
                     uniidiom = idiom
-                    print (idiom)
+                    print(idiom)
         self.hidiom = uniidiom
         return self.hidiom
 
@@ -56,7 +57,8 @@ class Idiomcorpus() :
         if not self.hidiom:
             self.eidiom = ''
         else:
-            self.eidiom = self.english[self.hindi.index(self.hidiom)].split(' ')
+            self.eidiom = self.english[self.hindi.index(
+                self.hidiom)].split(' ')
         return self.eidiom
 
     def idiom_match(self, input, idiom):
@@ -82,11 +84,11 @@ class Idiomcorpus() :
             for word in hidiomsplit:
                 if word in inputsplit:
                     outputsplit.remove(word)
-        else :
+        else:
             self.hidiom = ''
             self.eidiom = 'Not Found'
 
         self.output = ' '.join(outputsplit)
         self.output = translate(self.output, 'en')
-        print (self.output)
+        print(self.output)
         return self.output
